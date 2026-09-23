@@ -37,6 +37,7 @@ public class ConfiguracionSeguridad {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(reglas -> reglas
                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated())
             .exceptionHandling(errores -> errores.authenticationEntryPoint((request, response, ex) ->
                 errorSinToken(request, response, json, auditoria, entornoResolver)))
