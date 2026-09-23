@@ -24,6 +24,8 @@ Las políticas ABAC pasaron los casos aislados y los bordes de horario. El orque
 
 La API de documentos ya verifica lectura, listado filtrado, modificación, eliminación lógica y aprobación. Las pruebas de integración cubren los casos T1–T7 y T9–T17 relacionados con documentos, incluidos el listado exacto de Diego y los rechazos por una sola política. Los casos con cambios de estado restauran sus datos al terminar.
 
+La gestión de usuarios permite registrar, listar y actualizar solo con `GESTIONAR_USUARIOS`; los cambios de rol requieren también `ASIGNAR_ROLES`. El administrador no puede desactivarse ni quitarse su propio rol. El módulo de políticas permite cambiar configuraciones y activación con `GESTIONAR_CONFIGURACION`; P7 queda protegida. La prueba B4 confirmó que la caché se invalida tras desactivar y reactivar P4.
+
 ## Estado de evidencias
 
 Pendientes de implementación y ejecución. Cada caso tendrá solicitud, resultado esperado, resultado observado y evidencia real antes de declararse completo.

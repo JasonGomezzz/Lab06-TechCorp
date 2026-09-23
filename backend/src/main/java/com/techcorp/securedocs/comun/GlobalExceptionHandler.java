@@ -7,6 +7,7 @@ import com.techcorp.securedocs.autorizacion.AccesoDenegadoException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -55,10 +56,11 @@ public class GlobalExceptionHandler {
         return p;
     }
 
-    @ExceptionHandler(ConflictoEstadoException.class)
+    @ExceptionHandler({ConflictoEstadoException.class, DataIntegrityViolationException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ProblemDetail conflicto(ConflictoEstadoException ex) {
-        ProblemDetail p = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+    public ProblemDetail conflicto(Exception ex) {
+        String detalle = ex instanceof ConflictoEstadoException ? ex.getMessage() : "Los datos ya existen o están en uso";
+        ProblemDetail p = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, detalle);
         p.setTitle("Conflicto de estado");
         p.setProperty("codigo", "CONFLICTO_ESTADO");
         return p;

@@ -5,6 +5,7 @@ import com.techcorp.securedocs.auditoria.AuditoriaService;
 import com.techcorp.securedocs.autorizacion.abac.MotorAbac;
 import com.techcorp.securedocs.autorizacion.rbac.ServicioRbac;
 import com.techcorp.securedocs.politicas.ConfiguracionPoliticas;
+import com.techcorp.securedocs.comun.ConflictoEstadoException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -59,5 +60,12 @@ public class Autorizador {
         }
         return abac.evaluar(new ContextoAutorizacion(sujeto, Accion.READ, recurso, entorno),
             politicas.activas()).stream().allMatch(ResultadoPolitica::cumple);
+    }
+
+    public void validarCambioPropio(Sujeto actor, long objetivoId, String nuevoRol, String nuevoEstado) {
+        if (actor.id() == objetivoId && "ADMINISTRADOR".equals(actor.rol())
+            && (!"ADMINISTRADOR".equals(nuevoRol) || !"ACTIVO".equals(nuevoEstado))) {
+            throw new ConflictoEstadoException("Un administrador no puede desactivarse ni quitarse su rol");
+        }
     }
 }
