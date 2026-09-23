@@ -26,6 +26,8 @@ La API de documentos ya verifica lectura, listado filtrado, modificación, elimi
 
 La gestión de usuarios permite registrar, listar y actualizar solo con `GESTIONAR_USUARIOS`; los cambios de rol requieren también `ASIGNAR_ROLES`. El administrador no puede desactivarse ni quitarse su propio rol. El módulo de políticas permite cambiar configuraciones y activación con `GESTIONAR_CONFIGURACION`; P7 queda protegida. La prueba B4 confirmó que la caché se invalida tras desactivar y reactivar P4.
 
+La colección Postman se ejecutó contra el backend local con [55 solicitudes y 91 comprobaciones sin fallos](evidencias/newman-resumen.md). La [plantilla de casos](casos-de-prueba.md) mantiene vacías las columnas de resultado observado y captura hasta que Jason documente la demostración de entrega.
+
 ## Estado de evidencias
 
 Pendientes de implementación y ejecución. Cada caso tendrá solicitud, resultado esperado, resultado observado y evidencia real antes de declararse completo.
