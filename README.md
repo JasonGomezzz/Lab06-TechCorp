@@ -6,12 +6,12 @@ Laboratorio 6 de Seguridad en la nube: sistema de gestión de documentos y exped
 
 El proyecto sigue la guía `GLAB-S06-JFARFAN-2026-02.docx`. La tecnología elegida es Java 21, Spring Boot 3.5.16, MySQL 8 y, en una fase posterior, React con TypeScript. La guía permite elegir la tecnología.
 
-**Estado actual:** andamiaje inicial. Todavía no están implementadas las migraciones, la autenticación, la API ni la interfaz; por ello `docker compose up` aún no inicia una aplicación funcional. Este aviso se actualizará conforme avancen los commits.
+**Estado actual:** andamiaje y modelo de datos implementados. Flyway crea el esquema y los catálogos; el perfil `demo` carga los usuarios y documentos de prueba. Todavía no están implementadas la autenticación, la API ni la interfaz. `docker compose up` puede iniciar la base y el backend, pero aún no ofrece funcionalidades de usuario. Este aviso se actualizará conforme avancen los commits.
 
 ## Estructura
 
 - `backend/`: aplicación Spring Boot y Maven Wrapper.
-- `docs/`: decisiones, matrices, casos y evidencias verificadas.
+- `docs/`: modelo, decisiones, matrices, casos y evidencias verificadas.
 - `postman/`: colección de pruebas de API cuando exista la API.
 - `scripts/`: utilidades de demostración y entrega.
 - `docker-compose.yml`: MySQL y backend con perfil `demo`.

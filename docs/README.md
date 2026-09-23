@@ -14,6 +14,10 @@ El grupo usará Spring Boot, MySQL y React. El diseño separará autenticación,
 
 La política de vigencia de invitados, el simulador de entorno y el panel automático de casos son ampliaciones. Se abordarán después de los requisitos mínimos. No se presentarán capturas ni resultados hasta que provengan de una ejecución real.
 
+## Avance comprobado
+
+Flyway aplicó las tres primeras migraciones en MySQL 8.4. El perfil `demo` cargó 12 usuarios y 10 documentos con IDs fijos. Un segundo arranque mantuvo los mismos conteos. El [modelo de datos](modelo-datos.md) describe las entidades y enlaza el DDL ejecutable.
+
 ## Estado de evidencias
 
 Pendientes de implementación y ejecución. Cada caso tendrá solicitud, resultado esperado, resultado observado y evidencia real antes de declararse completo.
