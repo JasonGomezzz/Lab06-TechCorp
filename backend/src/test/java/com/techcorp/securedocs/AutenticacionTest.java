@@ -112,6 +112,33 @@ class AutenticacionTest {
         }
     }
 
+    @Test
+    void auditoriaRespetaPermisosYPermiteExportarCsv() throws Exception {
+        String admin = ingresar("admin", "Secure#2026");
+        api.perform(get("/auditoria").header("Authorization", "Bearer " + admin)
+                .param("accion", "LOGIN"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content[0].accion").value("LOGIN"));
+        api.perform(get("/auditoria").header("Authorization", "Bearer " + admin)
+                .param("formato", "csv"))
+            .andExpect(status().isOk())
+            .andExpect(result -> org.assertj.core.api.Assertions.assertThat(
+                result.getResponse().getContentAsString()).startsWith("id,fecha_hora,"));
+
+        String empleado = ingresar("diego.salas", "Secure#2026");
+        api.perform(get("/auditoria").header("Authorization", "Bearer " + empleado))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.codigo").value("RBAC_DENEGADO"));
+
+        String gerente = ingresar("laura.mendez", "Secure#2026");
+        String respuesta = api.perform(get("/auditoria").header("Authorization", "Bearer " + gerente))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        for (JsonNode registro : json.readTree(respuesta).get("content")) {
+            org.assertj.core.api.Assertions.assertThat(registro.get("departamentoRecurso").asText())
+                .isEqualTo("FINANZAS");
+        }
+    }
+
     private String ingresar(String usuario, String password) throws Exception {
         String body = json.writeValueAsString(new AuthDatos(usuario, password));
         String respuesta = api.perform(post("/auth/login").contentType(MediaType.APPLICATION_JSON).content(body))

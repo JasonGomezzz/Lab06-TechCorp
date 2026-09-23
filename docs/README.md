@@ -20,6 +20,8 @@ Flyway aplicó las tres primeras migraciones en MySQL 8.4. El perfil `demo` carg
 
 La autenticación con BCrypt y JWT pasó las pruebas de integración: login, credenciales erróneas, usuario suspendido, `/auth/me`, logout y token emitido antes de desactivar al usuario. El filtro vuelve a consultar el usuario en cada petición; el token no determina su rol ni su estado.
 
+Las políticas ABAC pasaron los casos aislados y los bordes de horario. El orquestador registró decisiones de RBAC y ABAC en MySQL; los triggers rechazaron la actualización y el borrado de registros. La [guía de auditoría](auditoria.md) explica filtros, alcance y exportación.
+
 ## Estado de evidencias
 
 Pendientes de implementación y ejecución. Cada caso tendrá solicitud, resultado esperado, resultado observado y evidencia real antes de declararse completo.

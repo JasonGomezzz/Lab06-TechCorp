@@ -48,4 +48,8 @@ public class Autorizador {
         auditoria.registrar(contexto, decision);
         throw new AccesoDenegadoException(decision);
     }
+
+    public String departamentoVisibleEnAuditoria(Sujeto sujeto) {
+        return "GERENTE".equals(sujeto.rol()) ? sujeto.departamento() : null;
+    }
 }

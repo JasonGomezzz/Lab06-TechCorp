@@ -21,23 +21,36 @@ public class AuditoriaService {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void registrar(ContextoAutorizacion contexto, Decision decision) {
+        guardar(new EventoAuditoria(contexto.sujeto().username(), contexto.sujeto().rol(),
+            contexto.sujeto().departamento(), contexto.recurso().identificador(),
+            contexto.accion().name(), decision.permitido() ? "PERMITIDO" : "DENEGADO",
+            decision.capa(), String.join("; ", decision.motivos()),
+            decision.politicas().stream().map(p -> Map.<String, Object>of(
+                "codigo", p.codigo(), "cumple", p.cumple(), "detalle", p.detalle())).toList(),
+            contexto.recurso().departamento(), contexto.entorno()));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void registrarEvento(EventoAuditoria evento) {
+        guardar(evento);
+    }
+
+    private void guardar(EventoAuditoria evento) {
         Auditoria registro = new Auditoria();
         registro.setFechaHora(LocalDateTime.now(reloj));
-        registro.setUsuario(contexto.sujeto().username());
-        registro.setUsuarioRol(contexto.sujeto().rol());
-        registro.setUsuarioDepartamento(contexto.sujeto().departamento());
-        registro.setRecurso(contexto.recurso().identificador());
-        registro.setAccion(contexto.accion().name());
-        registro.setResultado(decision.permitido() ? "PERMITIDO" : "DENEGADO");
-        registro.setCapa(decision.capa());
-        registro.setMotivo(String.join("; ", decision.motivos()));
-        registro.setPoliticasEvaluadas(decision.politicas().stream()
-            .map(p -> Map.<String, Object>of("codigo", p.codigo(), "cumple", p.cumple(), "detalle", p.detalle()))
-            .toList());
-        registro.setIp(contexto.entorno().direccionIp());
-        registro.setUbicacion(contexto.entorno().ubicacion());
-        registro.setDispositivo(contexto.entorno().dispositivo());
-        registro.setDepartamentoRecurso(contexto.recurso().departamento());
+        registro.setUsuario(evento.usuario());
+        registro.setUsuarioRol(evento.usuarioRol());
+        registro.setUsuarioDepartamento(evento.usuarioDepartamento());
+        registro.setRecurso(evento.recurso());
+        registro.setAccion(evento.accion());
+        registro.setResultado(evento.resultado());
+        registro.setCapa(evento.capa());
+        registro.setMotivo(evento.motivo());
+        registro.setPoliticasEvaluadas(evento.politicasEvaluadas());
+        registro.setIp(evento.entorno().direccionIp());
+        registro.setUbicacion(evento.entorno().ubicacion());
+        registro.setDispositivo(evento.entorno().dispositivo());
+        registro.setDepartamentoRecurso(evento.departamentoRecurso());
         repositorio.saveAndFlush(registro);
     }
 }

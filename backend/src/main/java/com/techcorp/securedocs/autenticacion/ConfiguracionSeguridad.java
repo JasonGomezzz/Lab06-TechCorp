@@ -2,6 +2,11 @@ package com.techcorp.securedocs.autenticacion;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.List;
+import com.techcorp.securedocs.auditoria.AuditoriaService;
+import com.techcorp.securedocs.auditoria.EventoAuditoria;
+import com.techcorp.securedocs.entorno.EntornoResolver;
+import jakarta.servlet.http.HttpServletRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techcorp.securedocs.usuarios.UsuarioRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +29,8 @@ public class ConfiguracionSeguridad {
 
     @Bean
     SecurityFilterChain seguridad(HttpSecurity http, ServicioJwt jwt, UsuarioRepository usuarios,
-                                 ObjectMapper json) throws Exception {
+                                 ObjectMapper json, AuditoriaService auditoria,
+                                 EntornoResolver entornoResolver) throws Exception {
         http.csrf(csrf -> csrf.disable())
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable())
@@ -33,12 +39,18 @@ public class ConfiguracionSeguridad {
                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 .anyRequest().authenticated())
             .exceptionHandling(errores -> errores.authenticationEntryPoint((request, response, ex) ->
-                errorSinToken(response, json)))
-            .addFilterBefore(new FiltroJwt(jwt, usuarios, json), UsernamePasswordAuthenticationFilter.class);
+                errorSinToken(request, response, json, auditoria, entornoResolver)))
+            .addFilterBefore(new FiltroJwt(jwt, usuarios, json, auditoria, entornoResolver),
+                UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
-    private static void errorSinToken(HttpServletResponse response, ObjectMapper json) throws IOException {
+    private static void errorSinToken(HttpServletRequest request, HttpServletResponse response,
+                                      ObjectMapper json, AuditoriaService auditoria,
+                                      EntornoResolver entornoResolver) throws IOException {
+        auditoria.registrarEvento(new EventoAuditoria("anonimo", null, null, request.getRequestURI(),
+            "AUTH_DENIED", "DENEGADO", "AUTH", "TOKEN_AUSENTE", List.of(), null,
+            entornoResolver.resolver(request)));
         response.setStatus(401);
         response.setContentType("application/problem+json");
         json.writeValue(response.getWriter(), Map.of(
