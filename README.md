@@ -62,6 +62,8 @@ En perfil `demo`, el simulador puede enviar `X-Sim-Hora`, `X-Sim-Ubicacion`, `X-
 
 Las columnas **Observado** y **Captura** de [casos de prueba](docs/casos-de-prueba.md) quedan listas para la evidencia personal. No se han fabricado capturas ni video. El [guion de video](docs/GUION-VIDEO.md) indica el recorrido sugerido.
 
+El [registro de verificación final](docs/evidencias/verificacion-final.md) contiene los resultados observados de compilación, pruebas y arranque de los tres servicios.
+
 ## Estructura del repositorio
 
 - `backend/`: API, motor RBAC/ABAC, migraciones y pruebas.

@@ -30,17 +30,17 @@ El historial se construye por unidades que compilan o documentan una pieza verif
 | 8 | Diagramas exportados a SVG | `1b5b4f9` |
 | 8 | README y seguimiento final | `79a53b4` |
 | 8 | Guion de demostración | `62a5a8e` |
+| 8 | Registro del plan e historial | `e8af1e9` |
+| 8 | Corrección y validación cruzada de la matriz ABAC | `952f045` |
+| 9 | Verificación final reproducible | `f978729` |
 
 ## Cierre propuesto
 
 Estas unidades deben convertirse en commits solo si el trabajo y su verificación se completan. El historial puede superar o quedar por debajo de 25 commits según el alcance real:
 
-1. Añadir la verificación reproducible de matrices y entregables.
-2. Corregir fallos reales hallados por las pruebas finales, si los hay.
-3. Registrar pruebas finales con resultados verificables.
-4. Incorporar capturas de T1–T17 y Postman hechas por el grupo.
-5. Incorporar el video o su enlace cuando el grupo lo grabe.
-6. Completar integrantes y observaciones personales de la entrega.
+1. Incorporar capturas de T1–T17 y Postman hechas por el grupo.
+2. Incorporar el video o su enlace cuando el grupo lo grabe.
+3. Completar integrantes y observaciones personales de la entrega.
 
 ## Reparto sugerido
 

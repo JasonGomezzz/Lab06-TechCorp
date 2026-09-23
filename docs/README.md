@@ -20,6 +20,8 @@ El backend separa autenticación de autorización. El punto central `Autorizador
 
 Newman ejecutó [55 solicitudes y 91 comprobaciones sin fallos](evidencias/newman-resumen.md). El panel de navegador ejecutó [T1–T17 con 17 correctos y 0 fallos](evidencias/panel-casos.md). Las pruebas de backend cubren autenticación, RBAC, ABAC, documentos, usuarios, políticas, auditoría y arquitectura. El build de React y TypeScript pasó.
 
+La [verificación final](evidencias/verificacion-final.md) reúne los comandos y resultados de backend, frontend, Compose, OpenAPI y matrices.
+
 ## Evidencias personales pendientes
 
 Las columnas **Observado** y **Captura** del archivo de casos quedan vacías intencionalmente hasta que Jason o el grupo generen y seleccionen las capturas de entrega. El video tampoco está grabado. Los resultados automatizados registrados no sustituyen estas evidencias visuales solicitadas por el curso.
