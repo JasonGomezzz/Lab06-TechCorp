@@ -18,6 +18,8 @@ La política de vigencia de invitados, el simulador de entorno y el panel autom�
 
 Flyway aplicó las tres primeras migraciones en MySQL 8.4. El perfil `demo` cargó 12 usuarios y 10 documentos con IDs fijos. Un segundo arranque mantuvo los mismos conteos. El [modelo de datos](modelo-datos.md) describe las entidades y enlaza el DDL ejecutable.
 
+La autenticación con BCrypt y JWT pasó las pruebas de integración: login, credenciales erróneas, usuario suspendido, `/auth/me`, logout y token emitido antes de desactivar al usuario. El filtro vuelve a consultar el usuario en cada petición; el token no determina su rol ni su estado.
+
 ## Estado de evidencias
 
 Pendientes de implementación y ejecución. Cada caso tendrá solicitud, resultado esperado, resultado observado y evidencia real antes de declararse completo.
