@@ -12,6 +12,12 @@ spring:
   flyway:
     enabled: true
 
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
 securedocs:
   zona-horaria: America/Lima
   proxy-confiable: false
