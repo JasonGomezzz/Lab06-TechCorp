@@ -7,6 +7,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.techcorp.securedocs.autorizacion.rbac.ServicioRbac;
+import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -43,6 +46,28 @@ class AutenticacionTest {
     @Autowired MockMvc api;
     @Autowired ObjectMapper json;
     @Autowired JdbcTemplate jdbc;
+    @Autowired ServicioRbac rbac;
+
+    @Test
+    void matrizRbacCoincideConLasOchoOperacionesDeLaGuia() {
+        Map<String, Set<String>> matriz = Map.of(
+            "ADMINISTRADOR", Set.of("CREAR_DOCUMENTO", "CONSULTAR_DOCUMENTO", "MODIFICAR_DOCUMENTO",
+                "ELIMINAR_DOCUMENTO", "APROBAR_DOCUMENTO", "VER_AUDITORIA", "GESTIONAR_USUARIOS", "ASIGNAR_ROLES"),
+            "GERENTE", Set.of("CREAR_DOCUMENTO", "CONSULTAR_DOCUMENTO", "MODIFICAR_DOCUMENTO",
+                "ELIMINAR_DOCUMENTO", "APROBAR_DOCUMENTO", "VER_AUDITORIA"),
+            "SUPERVISOR", Set.of("CREAR_DOCUMENTO", "CONSULTAR_DOCUMENTO", "MODIFICAR_DOCUMENTO", "APROBAR_DOCUMENTO"),
+            "EMPLEADO", Set.of("CREAR_DOCUMENTO", "CONSULTAR_DOCUMENTO", "MODIFICAR_DOCUMENTO"),
+            "AUDITOR", Set.of("CONSULTAR_DOCUMENTO", "VER_AUDITORIA"),
+            "INVITADO", Set.of("CONSULTAR_DOCUMENTO"));
+        Set<String> operaciones = matriz.get("ADMINISTRADOR");
+        for (var entrada : matriz.entrySet()) {
+            for (String operacion : operaciones) {
+                org.assertj.core.api.Assertions.assertThat(rbac.permite(entrada.getKey(), operacion))
+                    .as(entrada.getKey() + " / " + operacion)
+                    .isEqualTo(entrada.getValue().contains(operacion));
+            }
+        }
+    }
 
     @Test
     void loginMeYLogoutRevocaElToken() throws Exception {
