@@ -34,5 +34,15 @@ services:
       mysql:
         condition: service_healthy
 
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_DEMO: ${VITE_DEMO:-true}
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
 volumes:
   mysql_datos:
