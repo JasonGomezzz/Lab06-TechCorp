@@ -1,35 +1,77 @@
-# SecureDocs
+# SecureDocs · TechCorp
 
-Laboratorio 6 de Seguridad en la nube: sistema de gestión de documentos y expedientes de TechCorp S.A. con autorización combinada RBAC y ABAC.
+Laboratorio 06 de Seguridad en la nube. Sistema de documentos con autenticación JWT, permisos por rol (RBAC), políticas por atributos y entorno (ABAC), y auditoría de decisiones.
 
-## Alcance y estado
+La guía `GLAB-S06-JFARFAN-2026-02.docx` pide seis roles, ocho operaciones RBAC, ocho políticas ABAC mínimas, API protegida, doce casos base y evidencias. Este repositorio incluye además revocación de tokens, vigencia de invitados (P9), simulación de entorno y un panel de casos T1–T17. Las evidencias de Postman provienen de una ejecución real; las capturas y el video de entrega los prepara el estudiante.
 
-El proyecto sigue la guía `GLAB-S06-JFARFAN-2026-02.docx`. La tecnología elegida es Java 21, Spring Boot 3.5.16, MySQL 8 y, en una fase posterior, React con TypeScript. La guía permite elegir la tecnología.
+## Arquitectura
 
-**Estado actual:** el backend ya implementa autenticación, autorización RBAC/ABAC, auditoría y los módulos de documentos, usuarios y políticas. La colección Postman cubre T1–T17 y B1–B5 y pasó una ejecución real con 55 solicitudes y 91 comprobaciones. Faltan el frontend, las matrices finales, las capturas y el video de entrega. Este aviso se actualizará conforme avancen los commits.
+React + TypeScript + Vite y Tailwind en `frontend/`; Spring Boot 3.5.16 y Java 21 en `backend/`; MySQL 8.4 con Flyway. La autenticación la realiza Spring Security. `Autorizador` decide cada acceso con `ServicioRbac` y `MotorAbac`. [Diagramas y flujo](docs/arquitectura.md) · [modelo de datos](docs/modelo-datos.md) · [matriz RBAC](docs/matriz-rbac.md) · [matriz ABAC](docs/matriz-abac.md) · [auditoría](docs/auditoria.md).
 
-## Estructura
+## Ejecución con Docker
 
-- `backend/`: aplicación Spring Boot y Maven Wrapper.
-- `docs/`: modelo, decisiones, matrices, casos y evidencias verificadas.
-- `postman/`: colección de pruebas de API y entorno local sin contraseña.
-- `scripts/`: utilidades de demostración y entrega.
-- `docker-compose.yml`: MySQL y backend con perfil `demo`.
+Requisitos: Docker y Docker Compose.
 
-## Preparación
+1. Copia `.env.example` a `.env`.
+2. Sustituye los valores `CAMBIAR` por contraseñas locales y un `JWT_SECRET` aleatorio de al menos 32 bytes UTF-8. Define `SEED_PASSWORD` para las cuentas demo. No subas `.env`.
+3. Ejecuta `docker compose up --build -d`.
+4. Abre `http://localhost:3000` (interfaz). La API queda en `http://localhost:8080`; MySQL se expone en `localhost:3307`.
 
-1. Instalar Java 21 y Docker para la ejecución completa.
-2. Copiar `.env.example` a `.env` y sustituir los valores `CAMBIAR` por secretos locales. Nunca subir `.env`.
-3. Compilar el backend con `cd backend && ./mvnw -q -DskipTests compile`.
+El backend se inicia con perfil `demo`; `VITE_DEMO=true` compila el simulador en el frontend. Para ver el estado usa `docker compose ps`; para detener los servicios, `docker compose down`. `./scripts/reset-demo.sh --confirmar` borra **solo el volumen de datos de este proyecto** y vuelve a crear el conjunto demo; revisa el script antes de usarlo si hay datos propios.
 
-Las pruebas de autenticación se ejecutan con `cd backend && ./mvnw test`. Usan Testcontainers y se saltan automáticamente si Docker no está disponible. En el perfil `demo`, los usuarios de prueba usan la contraseña de `SEED_PASSWORD`. `JWT_SECRET` debe contener al menos 32 bytes UTF-8; el token dura una hora, y `/auth/logout` revoca su identificador.
+## Desarrollo local
 
-La [guía de Postman](postman/README.md) explica cómo ejecutar los 22 casos sin guardar la contraseña en Git. El [resumen de Newman](docs/evidencias/newman-resumen.md) registra el resultado automatizado real; la [plantilla de casos](docs/casos-de-prueba.md) reserva las capturas para la entrega.
+Requisitos: Java 21, Node.js 22, MySQL 8, Docker para las pruebas de integración.
 
-MySQL usa el puerto `3307` del equipo para evitar conflictos con instalaciones locales en `3306`. El backend usará el perfil `demo` dentro de Docker. La contraseña de los usuarios de demostración se configurará con `SEED_PASSWORD` cuando exista el sembrador.
+1. Arranca MySQL del Compose: `docker compose up -d mysql` con `.env` configurado.
+2. Inicia el backend: `cd backend && DB_URL=jdbc:mysql://localhost:3307/securedocs DB_USER=securedocs DB_PASSWORD=<valor-local> JWT_SECRET=<valor-local> SEED_PASSWORD=<valor-local> SPRING_PROFILES_ACTIVE=demo ./mvnw spring-boot:run`. Sustituye los valores por los de `.env` sin publicarlos.
+3. En otra terminal: `cd frontend && cp .env.example .env.local && npm ci && npm run dev`.
+4. Abre la URL que indique Vite. Su proxy envía `/api` al backend en `localhost:8080`.
 
-## Criterio de autorización
+## Cuentas demo
 
-Una operación se permitirá únicamente si RBAC permite la acción y ABAC permite el acceso al recurso en ese entorno. La matriz de permisos, las ocho políticas obligatorias y los casos de prueba se implementarán según la guía. Los componentes de autorización estarán centralizados y los intentos quedarán auditados.
+Todas usan `SEED_PASSWORD` del entorno. Ninguna contraseña real está en Git. Los correos `@techcorp.example` y algunas descripciones son datos sintéticos de demostración; la guía fija los nombres, roles, niveles e IDs utilizados por los casos.
 
-Consulta [el seguimiento del laboratorio](docs/README.md) para distinguir lo exigido por la guía de las ampliaciones planeadas.
+| Usuario | Rol | Uso destacado |
+| --- | --- | --- |
+| `admin` | ADMINISTRADOR | Usuarios, roles, políticas, auditoría |
+| `laura.mendez` | GERENTE | Documentos de FINANZAS y auditoría de su área |
+| `ana.torres`, `carlos.ruiz` | SUPERVISOR | Aprobación y propiedad |
+| `diego.salas`, `marta.quispe`, `juan.temporal` | EMPLEADO | Documentos y casos de denegación |
+| `sofia.paredes` | AUDITOR | Lectura y auditoría |
+| `invitado.externo`, `invitado.vencido` | INVITADO | Restricciones P8 y P9 |
+| `pedro.suspendido`, `rosa.inactiva` | EMPLEADO | Login denegado |
+
+## API y autorización
+
+`POST /auth/login` entrega un JWT de una hora; `POST /auth/logout` revoca su identificador. `GET /auth/me` devuelve rol, atributos y permisos actuales. Recursos: `/documentos`, `/usuarios`, `/politicas` y `/auditoria`. El backend vuelve a leer estado y rol en cada petición. El filtro no usa `@PreAuthorize` ni autoridades de Spring para decidir sobre documentos.
+
+En el perfil demo, la especificación está en `http://localhost:8080/v3/api-docs` y Swagger UI en `http://localhost:8080/swagger-ui.html`. Documentan el esquema Bearer y las cinco cabeceras de simulación. Ambos se desactivan fuera del perfil demo.
+
+El acceso a documentos requiere simultáneamente permiso RBAC y cumplimiento de las políticas ABAC aplicables. Si RBAC deniega, ABAC no se evalúa. Si ABAC deniega, se registran todas las políticas fallidas. El listado se filtra antes de responder. La auditoría registra acción, recurso, contexto, resultado, capa y motivos, y tiene triggers contra UPDATE y DELETE. [Casos T1–T17 y B1–B5](docs/casos-de-prueba.md).
+
+En perfil `demo`, el simulador puede enviar `X-Sim-Hora`, `X-Sim-Ubicacion`, `X-Sim-Dispositivo` y `X-Sim-Ip`. El entorno normal de los casos es 10:30, PERU, CORPORATIVO, 192.168.10.20. Fuera de demo, el backend ignora estas cabeceras. No expongas el perfil demo públicamente: las cabeceras son deliberadamente manipulables para la práctica. El JWT está en `sessionStorage` del navegador; para un despliegue real harían falta HTTPS, política de CSP y una estrategia de sesión endurecida.
+
+## Pruebas y evidencias
+
+- Backend: `cd backend && ./mvnw test` (Testcontainers MySQL; las pruebas que requieren Docker se omiten si no está disponible).
+- Frontend: `cd frontend && npm ci && npm run build && npm run lint`.
+- Matrices: `python3 scripts/generar-matrices.py --check` detecta deriva entre las tablas de documentación y la migración Flyway.
+- Postman: importa `postman/SecureDocs.postman_collection.json` y su entorno. [Instrucciones](postman/README.md) y [resultado real de Newman: 55 solicitudes, 91 comprobaciones, 0 fallos](docs/evidencias/newman-resumen.md).
+- Panel de casos: desde la interfaz demo, introduce la contraseña demo y ejecuta T1–T17. T3, T14 y T6 alteran datos; el panel ejecuta T17 antes de T6. Puede exportar un informe Markdown.
+
+Las columnas **Observado** y **Captura** de [casos de prueba](docs/casos-de-prueba.md) quedan listas para la evidencia personal. No se han fabricado capturas ni video. El [guion de video](docs/GUION-VIDEO.md) indica el recorrido sugerido.
+
+## Estructura del repositorio
+
+- `backend/`: API, motor RBAC/ABAC, migraciones y pruebas.
+- `frontend/`: interfaz React y Nginx para Docker.
+- `postman/`: colección y entorno sin secretos.
+- `docs/`: arquitectura, matrices, modelo, auditoría y evidencias.
+- `scripts/`: reinicio demo, generación de matrices y exportación de diagramas.
+
+## Decisiones y límites
+
+El sistema usa rechazo por defecto, políticas centralizadas en la tabla `politica`, caché invalidada tras cambios y reloj en `America/Lima`. La decisión de autorización se registra incluso cuando se deniega. El borrado de documentos es lógico. Las contraseñas se codifican con BCrypt. La revocación de JWT exige persistencia, por lo que el token deja de ser completamente independiente del servidor.
+
+Este es un entorno académico; faltan las capturas, la grabación y los nombres de integrantes para la entrega. **Integrantes:** Jason Gómez; [completar integrantes del grupo]. Repositorio: [Lab06-TechCorp](https://github.com/JasonGomezzz/Lab06-TechCorp).
