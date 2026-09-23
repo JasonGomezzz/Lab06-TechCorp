@@ -1,6 +1,7 @@
 package com.techcorp.securedocs.auditoria;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import com.techcorp.securedocs.autorizacion.Accion;
 import com.techcorp.securedocs.autorizacion.Autorizador;
 import com.techcorp.securedocs.autorizacion.Recurso;
@@ -60,6 +61,11 @@ public class AuditoriaController {
             throw new IllegalArgumentException("La paginación debe usar pagina >= 0 y tamano entre 1 y 100");
         }
         Page<Auditoria> datos = consulta.consultar(filtros, alcance, pagina, tamano);
-        return ResponseEntity.ok(datos);
+        return ResponseEntity.ok(new PaginaAuditoria(datos.getContent(), datos.getTotalElements(),
+            datos.getNumber(), datos.getSize(), datos.getTotalPages()));
+    }
+
+    public record PaginaAuditoria(List<Auditoria> content, long totalElements,
+                                  int number, int size, int totalPages) {
     }
 }
