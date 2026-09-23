@@ -112,8 +112,9 @@ public class DocumentoService {
     private Documento existente(long id, Usuario usuario, Accion accion, Entorno entorno) {
         Documento documento = documentos.findWithPropietarioAndDepartamentoById(id).orElse(null);
         if (documento == null || "ELIMINADO".equals(documento.getEstado())) {
-            auditoria.registrarEvento(new EventoAuditoria(usuario.getUsername(), usuario.getRol().getCodigo(),
-                usuario.getDepartamento().getCodigo(), "documento-" + id, accion.name(), "DENEGADO",
+            Sujeto sujeto = Sujeto.de(usuario);
+            auditoria.registrarEvento(new EventoAuditoria(sujeto.username(), sujeto.rol(),
+                sujeto.departamento(), "documento-" + id, accion.name(), "DENEGADO",
                 "RECURSO", "Documento no encontrado", List.of(), null, entorno));
             throw new NoSuchElementException("Documento no encontrado");
         }
