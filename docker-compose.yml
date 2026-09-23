@@ -1,6 +1,8 @@
 services:
   mysql:
     image: mysql:8.4
+    # El entorno local no replica datos; permite crear los triggers con el usuario de la app.
+    command: --skip-log-bin
     environment:
       MYSQL_DATABASE: securedocs
       MYSQL_USER: ${DB_USER:?Definir DB_USER en .env}
