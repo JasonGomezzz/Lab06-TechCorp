@@ -22,6 +22,8 @@ La autenticación con BCrypt y JWT pasó las pruebas de integración: login, cre
 
 Las políticas ABAC pasaron los casos aislados y los bordes de horario. El orquestador registró decisiones de RBAC y ABAC en MySQL; los triggers rechazaron la actualización y el borrado de registros. La [guía de auditoría](auditoria.md) explica filtros, alcance y exportación.
 
+La API de documentos ya verifica lectura, listado filtrado, modificación, eliminación lógica y aprobación. Las pruebas de integración cubren los casos T1–T7 y T9–T17 relacionados con documentos, incluidos el listado exacto de Diego y los rechazos por una sola política. Los casos con cambios de estado restauran sus datos al terminar.
+
 ## Estado de evidencias
 
 Pendientes de implementación y ejecución. Cada caso tendrá solicitud, resultado esperado, resultado observado y evidencia real antes de declararse completo.

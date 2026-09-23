@@ -54,4 +54,13 @@ public class GlobalExceptionHandler {
         p.setProperty("codigo", "NO_ENCONTRADO");
         return p;
     }
+
+    @ExceptionHandler(ConflictoEstadoException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ProblemDetail conflicto(ConflictoEstadoException ex) {
+        ProblemDetail p = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        p.setTitle("Conflicto de estado");
+        p.setProperty("codigo", "CONFLICTO_ESTADO");
+        return p;
+    }
 }

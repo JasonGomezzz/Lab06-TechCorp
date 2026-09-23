@@ -52,4 +52,12 @@ public class Autorizador {
     public String departamentoVisibleEnAuditoria(Sujeto sujeto) {
         return "GERENTE".equals(sujeto.rol()) ? sujeto.departamento() : null;
     }
+
+    public boolean permiteLecturaEnListado(Sujeto sujeto, Recurso recurso, Entorno entorno) {
+        if (!"ACTIVO".equals(sujeto.estado()) || !rbac.permite(sujeto.rol(), Accion.READ.permiso())) {
+            return false;
+        }
+        return abac.evaluar(new ContextoAutorizacion(sujeto, Accion.READ, recurso, entorno),
+            politicas.activas()).stream().allMatch(ResultadoPolitica::cumple);
+    }
 }

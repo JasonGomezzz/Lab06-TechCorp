@@ -6,7 +6,7 @@ Laboratorio 6 de Seguridad en la nube: sistema de gestión de documentos y exped
 
 El proyecto sigue la guía `GLAB-S06-JFARFAN-2026-02.docx`. La tecnología elegida es Java 21, Spring Boot 3.5.16, MySQL 8 y, en una fase posterior, React con TypeScript. La guía permite elegir la tecnología.
 
-**Estado actual:** andamiaje, modelo de datos, autenticación, motor RBAC/ABAC y auditoría implementados. Están disponibles `/auth/login`, `/auth/logout`, `/auth/me` y `GET /auditoria`. Faltan los endpoints de usuarios y documentos, las pruebas de API completas y la interfaz. Este aviso se actualizará conforme avancen los commits.
+**Estado actual:** andamiaje, modelo de datos, autenticación, motor RBAC/ABAC, auditoría y API de documentos implementados. Están disponibles `/auth/login`, `/auth/logout`, `/auth/me`, `GET /auditoria` y los endpoints de `/documentos`. Faltan la gestión de usuarios y políticas, las pruebas de API completas y la interfaz. Este aviso se actualizará conforme avancen los commits.
 
 ## Estructura
 
